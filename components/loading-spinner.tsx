@@ -1,0 +1,30 @@
+'use client'
+
+import { Loader2 } from 'lucide-react'
+
+interface LoadingSpinnerProps {
+  size?: 'sm' | 'md' | 'lg'
+  className?: string
+}
+
+export function LoadingSpinner({ size = 'md', className }: LoadingSpinnerProps) {
+  const sizeMap = {
+    sm: 'h-4 w-4',
+    md: 'h-6 w-6',
+    lg: 'h-8 w-8',
+  }
+
+  return (
+    <div className={className}>
+      <Loader2 className={`${sizeMap[size]} animate-spin text-blue-600`} />
+    </div>
+  )
+}
+
+export function PageLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <LoadingSpinner size="lg" />
+    </div>
+  )
+}

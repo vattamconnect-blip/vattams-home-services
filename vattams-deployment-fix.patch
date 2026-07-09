@@ -1,0 +1,88 @@
+From e81a87273d7ed81f6cddfcb024a96a7750e59e1f Mon Sep 17 00:00:00 2001
+From: Bolt Agent <agent@bolt.new>
+Date: Thu, 9 Jul 2026 02:44:51 +0000
+Subject: [PATCH] Fix Vercel build: remove Netlify deps, simplify config,
+ graceful env vars
+
+---
+ lib/supabase/client.ts |  4 ++--
+ netlify.toml           |  6 ------
+ next.config.js         | 11 -----------
+ package.json           |  7 ++-----
+ 4 files changed, 4 insertions(+), 24 deletions(-)
+ delete mode 100644 netlify.toml
+
+diff --git a/lib/supabase/client.ts b/lib/supabase/client.ts
+index c82c23d..525735a 100644
+--- a/lib/supabase/client.ts
++++ b/lib/supabase/client.ts
+@@ -1,7 +1,7 @@
+ import { createClient } from '@supabase/supabase-js'
+ 
+-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
++const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
++const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+ 
+ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+   auth: {
+diff --git a/netlify.toml b/netlify.toml
+deleted file mode 100644
+index 4dca0ca..0000000
+--- a/netlify.toml
++++ /dev/null
+@@ -1,6 +0,0 @@
+-[build]
+-command = "npx next build"
+-publish = ".next"
+-
+-[[plugins]]
+-package = "@netlify/plugin-nextjs"
+diff --git a/next.config.js b/next.config.js
+index f7c149c..dd06f6c 100644
+--- a/next.config.js
++++ b/next.config.js
+@@ -7,17 +7,6 @@ const nextConfig = {
+     ignoreBuildErrors: false,
+   },
+   images: { unoptimized: true },
+-  webpack: (config, { isServer }) => {
+-    config.watchOptions = {
+-      poll: 1000,
+-      aggregateTimeout: 300,
+-    };
+-    return config;
+-  },
+-  onDemandEntries: {
+-    maxInactiveAge: 25 * 1000,
+-    pagesBufferLength: 2,
+-  },
+ };
+ 
+ module.exports = nextConfig;
+diff --git a/package.json b/package.json
+index 8364526..d01b3ee 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+-  "name": "nextjs",
+-  "version": "0.1.0",
++  "name": "vattams-home-services",
++  "version": "1.0.0",
+   "private": true,
+   "scripts": {
+     "dev": "next dev",
+@@ -10,9 +10,6 @@
+     "typecheck": "tsc --noEmit"
+   },
+   "dependencies": {
+-    "@hookform/resolvers": "^3.9.0",
+-    "@netlify/plugin-nextjs": "^5.15.1",
+-    "@next/swc-wasm-nodejs": "13.5.1",
+     "@radix-ui/react-accordion": "^1.2.0",
+     "@radix-ui/react-alert-dialog": "^1.1.1",
+     "@radix-ui/react-aspect-ratio": "^1.1.0",
+-- 
+2.47.3
+
